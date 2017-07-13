@@ -1,4 +1,4 @@
 class client_message(object):
-    """description of class"""
-
+    """This class is designed as a container for a clientside message and all details needed for simple handling"""
+    import datetime
 

@@ -1,4 +1,4 @@
 class client_message_table(object):
-    """description of class"""
-
+    """This class is designed to hold all the incoming messages in place for the interface to access"""
+    from .client_message_class import client_message
 
