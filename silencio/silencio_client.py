@@ -12,5 +12,5 @@ Created for:
 Seng 299 Summer 2017
 """
 
-from .client_interface_class import client_interface
-from .client_network_class import client_network
+from .client_interface import interface
+from .client_network import network

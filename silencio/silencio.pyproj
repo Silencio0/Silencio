@@ -22,16 +22,40 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="client_interface_class.py">
+    <Compile Include="client_interface.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="client_message_class.py">
+    <Compile Include="client_message.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="client_message_table_class.py">
+    <Compile Include="client_message_table.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="client_network_class.py">
+    <Compile Include="client_network.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_active_chatroom.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_active_user.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_connection.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_database.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_message.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_network.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_stored_chatroom.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="server_stored_user.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="silencio_client.py">
