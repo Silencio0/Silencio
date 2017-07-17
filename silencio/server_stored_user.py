@@ -1,4 +1,9 @@
 class stored_user(object):
-    """description of class"""
+
+    #user that is saved into the database.  attributes are name, password, and alias. ID is assigned by database
+    __init__(self, name, password, alias):
+        self.name = name
+        self.password = password
+        self.alias = alias
 
 
