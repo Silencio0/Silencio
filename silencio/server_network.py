@@ -4,7 +4,6 @@ import datetime
 import select
 from .server_active_user import active_user
 from .server_active_chatroom import active_chatroom
-from .server_connection import connection
 
 class network(object):
     """Server network class that does all the hard stuff."""
@@ -24,12 +23,10 @@ class network(object):
         # Ready initial connections port
         initial_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         initial_sock.bind(server_addr)
-        initial_sock.listen()
-        initial_sock.setblocking(0)     
+        initial_sock.listen()    
         
         #add initial connection port to connections for monitoring
         connection_list = [initial_sock]
-
 
     def __init__ (self, server_addr):
         """ Network constructor with inputted server address formatted like ('localhost', 7700) """
@@ -46,7 +43,6 @@ class network(object):
         initial_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         initial_sock.bind(server_addr)
         initial_sock.listen()
-        initial_sock.setblocking(0)
         
         #add initial connection port to connections for monitoring
         connection_list = [initial_sock]
@@ -72,6 +68,7 @@ class network(object):
             #else we read message from the socket
             else:
                 domessagestuff()
+
                 
                 
                 

@@ -39,7 +39,6 @@ class active_user(object):
         """returns the current chatroom for the active user"""
         return current_room
 
-
     def check_alias():
         """Calls the database and confirms and sets the alias for a user"""
         alias = database.get_alias(username)
@@ -70,3 +69,7 @@ class active_user(object):
         #if incorrect password
         else: 
             return False 
+
+    def register(in_user, in_pass):
+        """ Function that sets up new user info in the user database. Also logs in user. """
+        #add user to database and login
