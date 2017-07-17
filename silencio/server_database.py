@@ -5,7 +5,7 @@ import pymysql
 
 class database(object):
     """Database class for the server that is designed to cold store all user and chatroom info"""
-
+    #this will change if we run off nolans computer. will update if/when necessary
     db = ("localhost", "Avery", "test", "CHAT_DATABASE")
 
     def __init__(self):
@@ -52,4 +52,7 @@ class database(object):
     def num_users(self):
         self.cursor.execute("""SELECT COUNT(*) FROM users""")
         temp = self.cursor.fetchone()
-        return temp[0]
+        if temp is not None:
+            return temp[0]
+        else:
+            print ("Table is empty")
