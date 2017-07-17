@@ -11,8 +11,9 @@ class database(object):
     def __init__(self):
         self.con = pymysql.connect(*self.db)
         self.cursor = self.con.cursor()
-        
-     def insert(self, user):
+     
+#inserts a user if the user isn't already there.
+    def insert(self, user):
 
         if self.query("name", user.name) is None:
             self.cursor.execute("""INSERT into users VALUES (NULL, %s, %s, %s)""",(user.name,
@@ -21,7 +22,9 @@ class database(object):
         else:
         	print ("ID already taken")
 
+#query finds a user given the column(id, name, or alias)and returns the user if found
     def query(self, column, value):
+
         if column is 'id':
             self.cursor.execute("""SELECT * from users WHERE id =(%s)""",(value))
         elif column is 'name':
@@ -29,12 +32,14 @@ class database(object):
         elif column is 'alias':
             self.cursor.execute("""SELECT * from users WHERE alias =(%s)""",(value))            
         temp = self.cursor.fetchone()
+    #If a user is found, return it
         if temp is not None:
             temp_user = user(temp[1],temp[2], temp[3]) 
             return temp_user
         else:
             print ("No User matching that id")       
 
+#retrieves an id of a given user 
     def retrieve_id(self, user):
         self.cursor.execute("""SELECT id from users WHERE name=(%s)""",(user.name))
         temp = self.cursor.fetchone()
@@ -43,6 +48,7 @@ class database(object):
         else:
             print ("No id matching that id")
 
+#returns total number of users
     def num_users(self):
         self.cursor.execute("""SELECT COUNT(*) FROM users""")
         temp = self.cursor.fetchone()
