@@ -58,7 +58,7 @@ class database(object):
             print ("No id matching that id")
 
 #sets an alias for a user    
-    def check_alias(self, alias, user):
+    def set_alias(self, alias, user):
         self.cursor.execute("""UPDATE users SET alias = (%s) WHERE name = (%s)""", (alias, user.name))
         self.con.commit()
         user.alias = alias
