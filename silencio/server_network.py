@@ -47,7 +47,7 @@ class network(object):
         #add initial connection port to connections for monitoring
         connection_list = [initial_sock]
 
-    def listen ():
+    def listen (self):
         """function that listens to all connections for incoming traffic. Also listens to initial connection port. """ 
         readable, writeable, errored = select.select(connection_list, [],[])
         

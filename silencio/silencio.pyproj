@@ -40,9 +40,6 @@
     <Compile Include="server_active_user.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_connection.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="server_database.py">
       <SubType>Code</SubType>
     </Compile>

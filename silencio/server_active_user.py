@@ -27,27 +27,27 @@ class active_user(object):
         current_room = 0
         self.check_alias()
 
-    def get_port():
+    def get_port(self):
         """Gives you the port assigned to the connection"""
         return assigned_port
 
-    def get_addr():
+    def get_addr(self):
         """Gives you the client address the connection"""
         return client_addr
     
-    def get_current_room():
+    def get_current_room(self):
         """returns the current chatroom for the active user"""
         return current_room
 
-    def check_alias():
+    def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
         alias = database.get_alias(username)
 
-    def set_port(input_port):
+    def set_port(self, input_port):
         """Sets the current active port of the user to a user defined value"""
         assigned_port = input_port
 
-    def set_current_room(input_room):
+    def set_current_room(self, input_room):
         """sets the current chat room of the active user to the inputted value, 0 is the default for not in a room."""
         current_room = input_room
 
@@ -70,6 +70,6 @@ class active_user(object):
         else: 
             return False 
 
-    def register(in_user, in_pass):
+    def register(self, in_user, in_pass):
         """ Function that sets up new user info in the user database. Also logs in user. """
         #add user to database and login
