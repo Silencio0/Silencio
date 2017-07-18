@@ -5,11 +5,13 @@ from .server_active_chatroom import active_chatroom
 class message(object):
     """The basic message class for moving messages in the server"""
 
-    def __init__ (self, user, chatroom, content):
+    def __init__ (self, user, chatroom, content, time):
         """ Default constructor for a message. """
-        sender = user
-        sent_in = chatroom
-        string = content
+        self.sender = user
+        self.sent_in = chatroom
+        self.timestamp = time
+        self.string = content
+        
 
 
     def parse_message_type(self):
