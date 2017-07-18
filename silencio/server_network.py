@@ -133,7 +133,6 @@ class network(object):
         for s in errored:
             #handle socket errors
             dostuff()
-<<<<<<< HEAD
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
@@ -159,11 +158,10 @@ class network(object):
 
     def broadcast(self, in_message, in_room):
         """ Broadcast function for bradcasting a message to a chatroom. """
-=======
+
 
     def broadcast(self, in_message, in_room_name):
         """ Broadcast function for bradcasting a message to a chatroom. Takes a message class and a room name string. Returns true if succeeds, false if room is not found."""
->>>>>>> 560c5b623b3d407d9209588b793309c04ef58a9d
         
         #lookup chatroom
         room_found = False
