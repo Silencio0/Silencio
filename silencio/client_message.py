@@ -5,10 +5,8 @@ class message(object):
     
 
     
-    def __init__(self, username, message_string, time_sent):
-        self.user = username
-        self.content = message_string
-        self.timestamp = time_sent
+    def __init__(self, in_string):
+        self.text = in_string
 
     def __init__(self, username, message_string):
         self.user = username

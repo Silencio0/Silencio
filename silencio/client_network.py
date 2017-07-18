@@ -1,8 +1,8 @@
 import sys
 import socket
 import datetime
-from .client_message import message
-from .client_message_table import message_table
+import select
+
 
 class network(object):
     """This class is designed to handle network message sending and recieving for the client end"""
@@ -10,16 +10,17 @@ class network(object):
     def __init__(self, server_addr, server_port):
         """ Default constructor for client network. Requires the server address and port number as inputs. Returns false if connection fails."""
 
-        local_addr = ('localhost', 7700)
-        server_socket = (server_addr, server_port)
-        connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        connection = socket.bind(local_addr)
+        self.local_addr = ('localhost', 7700)
+        self.server_socket = (server_addr, server_port)
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection = socket.bind(self.local_addr)
+        self.message_q = []
         
         try:
-            connection.create_connect(server_port)
+            self.connection.create_connect(server_port)
 
         except:
-            print >> sys.stderr, 'failed to connect to server \n'
+            sys.stderr.write('failed to connect to server \n')
             failed = True
             connection.close()
             return False
@@ -27,36 +28,69 @@ class network(object):
     def __init__(self, server_addr, server_port, local_port):
         """ Constructor for client network. Requires the server address, server port, and local port as inputs. Returns false if connection fails."""
 
-        local_addr = ('localhost', local_port)
-        server_socket = (server_addr, server_port)
-        connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        connection = socket.bind(local_addr)
+        self.local_addr = ('localhost', local_port)
+        self.server_socket = (server_addr, server_port)
+        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.connection = socket.bind(self.local_addr)
+        self.message_q = []
         
         try:
             connection.create_connect(server_port)
 
         except:
-            print >> sys.stderr, 'failed to connect to server \n'
+            sys.stderr.write('failed to connect to server \n')
             failed = True
             connection.close()
             return False
         
-    def login(input_user, input_pass):
+    def login(self, input_user, input_pass):
         """ Function to send the login message to the server. Returns false if incorrect, True if correct. """
         #login and stuff
 
-    def register(input_user, input_pass):
+    def register(self, input_user, input_pass):
         """ Function to send a register message to the server. Returns false if cannot be registered, True if registered. """
         #register and login and stuff
 
-    def listen():
+    def listen(self):
         """ Function that checks the network port for incoming message and availability. Creates new messages for incoming messages. Appends incoming messages to message table. """
-        #check if there's messages and stuff
+        readable, writeable, errored = select.select(self.connection)
+        
+        if self.connection in readable:
+            text = self.read_connection()
+            return text
 
-    def send_message(input_message):
+        if self.connection in writeable:
+            for message in self.message_q:
+                send_message(message)
+                sel.message_q.remove(message)
+            
+            return
+
+        if self.connection in errored:
+
+            self.disconnect()
+            return 'Connection errored out'
+
+    def send_message(self,input_message):
         """ Function that sends messages to the server. Calls listen first to make sure port is free. Returns false if it Fails, true otherwise. """
-        #Send a message and stuff
+        try: 
+            connection.send('\r' + input_message + '\r')
 
-    def disconnect():
+        except:
+            #message failed 
+            return False
+
+        return True
+
+    def read_connection (self):
+        sock = self.connection
+        string = sock.recv(4098)
+
+        return string
+
+    def disconnect(self):
         """ Function that disconnects client form the server. Returns True after successful disconnect."""
-        #disconnect and stuff
+        connection.close()
+
+    def q_send(send, in_string):
+        self.message_q.append(in_string)
