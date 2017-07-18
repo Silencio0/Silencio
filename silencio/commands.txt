@@ -4,3 +4,5 @@
 /block
 /unlock
 /delete
+/login
+/register
