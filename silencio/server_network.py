@@ -67,7 +67,34 @@ class network(object):
             
             #else we read message from the socket
             else:
-                domessagestuff()
+                #receive data with buffer
+                try:
+                    data = sock.recv(4096)
+                    if data:
+                        #message not empty
+                        content = data
+                        #determine what the message is for and perform that task
+                        state = parse_message_type()
+                        #finds the bracketed word, e.g /join [this] in_brackets = this
+                        in_brackets = re.search(r"\[([A-Za-z0-9]+)\]", data)
+                        if state == "/join":
+                            join()
+                        elif state == "/create":
+                            create()
+                        elif state == "/set_alias":
+                            alias = in_brackets
+                        elif state == "/block":
+                            block()
+                        elif state == "/unblock":
+                            unblock()
+                        elif state == "/delete":
+                            delete()
+                        else:
+                            sendmessage()
+                except:
+                    print("no data recieved\n")
+
+
 
                 
                 
