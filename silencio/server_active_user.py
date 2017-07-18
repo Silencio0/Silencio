@@ -3,13 +3,13 @@ from .server_database import database
 class active_user(object):
     """Class for handling active users logged into the server. Contains all info needed during active use."""
 
-    username
-    assigned_port
-    client_addr
-    current_room
-    alias
-    user_data
-    blocked_users
+    self.username
+    self.assigned_port
+    self.client_addr
+    self.current_room
+    self.alias
+    self.user_data
+    self.blocked_users
 
     def __init__(self, sock, addr):
         """ Default active user constructor for users not signed in. Only holds the connection data, but not the user data. """
@@ -39,9 +39,14 @@ class active_user(object):
         """returns the current chatroom for the active user"""
         return current_room
 
+    def get_alias(self):
+        
+        return self.alias
+
     def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
-        alias = database.get_alias(username)
+        self.alias = database.get_alias(username)
+
 
     def set_port(self, input_port):
         """Sets the current active port of the user to a user defined value"""
