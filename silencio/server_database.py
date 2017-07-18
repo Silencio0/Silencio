@@ -36,7 +36,8 @@ class database(object):
             return temp_user
         else:
             print ("No User Matching That ID")
- #query finds a user given the name and returns the user if found       
+
+#query finds a user given the name and returns the user if found       
     def query_name(self, name):
         self.cursor.execute("""SELECT * from users WHERE name =(%s)""",(name))           
         temp = self.cursor.fetchone()
@@ -63,7 +64,7 @@ class database(object):
         self.con.commit()
         user.alias = alias
 
-
+#blocks a user(blocked) for another user(blocker)
     def block_user(self, blocker, blocked):
     
         if blocker.name is blocked.name:
@@ -88,7 +89,7 @@ class database(object):
             self.con.commit()
 
 
-
+#unblocks a user(blocked) for another user(blocker)
     def unblock_user(self, blocker, blocked):
     
         list_blocked = self.retrieve_blocked_users(blocker)
@@ -111,6 +112,7 @@ class database(object):
         else: 
             print("No users blocked")
 
+#Returns True or False is a user is blocked by another user.
     def is_blocked(self, blocker, blocked):
 
         list_blocked = self.retrieve_blocked_users(blocker)
@@ -120,14 +122,13 @@ class database(object):
             if blocked_id in list_blocked: return True
         else:
             return False
-
+#Returns all of the blocked users (in a string of IDs) of a certain user.
     def retrieve_blocked_users(self, user):
         self.cursor.execute("""SELECT blocked_users from users WHERE name=(%s)""",(user.name))
         temp = self.cursor.fetchone()
         if temp is not None:
             return temp[0]
         else:
-            print ("No users blocked")
             return None
 
 #returns total number of users
