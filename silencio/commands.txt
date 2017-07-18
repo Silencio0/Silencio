@@ -1,0 +1,6 @@
+/join
+/create
+/set_alias
+/block
+/unlock
+/delete

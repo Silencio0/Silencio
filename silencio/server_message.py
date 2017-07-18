@@ -14,3 +14,11 @@ class message(object):
 
     def parse_message_type(self):
         """ This is the bit that decides what kind of message it is. Returns a state for handling that type of message """
+        #searches content for keywords, if found returns the keyword ex: /join 
+        file = open(commands.txt, "r")
+        for key_word in file:
+        	if key_word in content:
+        		return key_word
+        	else:
+        		return "message"
+
