@@ -133,32 +133,32 @@ class network(object):
         for s in errored:
             #handle socket errors
             dostuff()
+    
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
             #poll database for user ifo
             userinfo = server_database.query_name(user_name)
             if userinfo[1] == passkey:
-                return 1
+                return True
             else:
-                print("Incorrect password")
-                return 0
+                sys.stderr.write("Incorrect password querry\n")
+                return False
         except:
             #query_name couldn't find username, error message already in that function
             #try / except is here to avoid crashing when username is incorrect
             print("\n")
-            return 0
-    def register(self, user_name, passkey):
-        """ Register function returns 1 if successfully registered otherwise 0 """
+            return False
+
+    def register(self, in_user, user_name, passkey):
+        """ Register function returns true if successfully registered otherwise false """
         #store desired username and password in temp user, default alias to username
-        to_register = stored_user(user_name, passkey, user_name)
+        to_register = stored_user(user_name, passkey, user_name)                            ####The idea was to only talk to database, not the stored user class!####
         if server_database.insert(to_register) == 1:
-            print ("Successfully registered with username: " + user_name
+            sys.stderr.write ("Successfully registered with username: " + user_name
              + " to set an alias type /set_alias")
-
-    def broadcast(self, in_message, in_room):
-        """ Broadcast function for bradcasting a message to a chatroom. """
-
+            in_user.username = user_name
+            in_user.alias = user_name
 
     def broadcast(self, in_message, in_room_name):
         """ Broadcast function for bradcasting a message to a chatroom. Takes a message class and a room name string. Returns true if succeeds, false if room is not found."""
@@ -172,10 +172,12 @@ class network(object):
 
         #if chatroom does not exist, return false
         if room_found is False:
+            sys.stderr.write('Failed to broadcast message to non-existant room ' + in_room_name + '.\n')
             return False
 
         #send message to all users in the room
         else:
+            sys.stderr.write('Broadcasting message to chat room named ' + in_room_name + '.\n')
             for user in room.users:
                 if user is not in_message.sender:
                     send_msg(user, in_message)
@@ -186,6 +188,8 @@ class network(object):
 
     def recv_msg(self, sock, msglen):
         """ Function to recieve a message from a socket as seperate parts. Returns a message class """                
+        
+        
         data = sock.recv(msglen)
 
         for active_u in self.active_user_list:
@@ -207,7 +211,24 @@ class network(object):
         
     def send_msg(self, in_user, in_message):
         """ Function to send a formatted message to a socket. Sends a tuple of (user, timestamp, text) as unformatted bytes. """
-        in_user.assigned_port.send("\r" + '[' + str(in_message.sender.get_alias()) + ' : ' + str(in_message.timestamp) + ']' + in_message.string)
+        
+        port = in_user.assigned_port
+
+        #check if message is blocked
+        blocked = database.retrieve_blocked_users(in_user.username)
+        if in_message.sender in blocked:
+            return False
+
+        #if not, send message
+        else:
+            port.send("\r" + '[' + str(in_message.sender.get_alias()) + ' : ' + str(in_message.timestamp) + ']'
+             + in_message.string)
+            return True
+
+    def send_server_feedback(self, in_user, in_string):
+        """ Function to send a message to a specific user to provide feedback on their action. ie moved to room or set alias, etc. """
+        port = in_user.assigned_port
+        port.send("\r" + '[SERVER : ' + datetime.now() + ']' + in_string)
 
     def create_chatroom(self, in_name, owning_user):
         """ Function to add an active chatroom """
@@ -215,6 +236,7 @@ class network(object):
         #check if name taken
         for room in self.active_chatroom_list:
             if room.name is in_name:
+                sys.stderr.write('Failed to create chatroom named ' + in_name + '.\n')
                 return False
 
         #create and return room
@@ -222,15 +244,30 @@ class network(object):
         self.active_chatroom_list.append(newroom)
         self.num_active_chatrooms += 1
 
+        sys.stderr.write('Succesfully created chatroom named ' + in_name + '.\n')
+
     def destroy_chatroom(self, in_name):
         """ Function to remove an active chatroom. Looks up chatroom by name and removes it. Returns true if successful, false if not found. """
+        
+        #find default room to send users to
+        for room in self.num_active_chatrooms:
+            if room.name is 'default':    
+                default = room
 
         #find room and remove it
         for room in self.active_chatroom_list:
+                       
             if room.name is in_name:
+
+                #empty users into default room
+            for user in room.users:
+                user.current_room = default
+
                 self.active_chatroom_list.remove(room)
                 self.num_active_cahtrooms -= 1
+                sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
                 return True
 
         #room not found
+        sys.stderr.write('Failed to destroy chatroom named ' + in_name + ' as it was not found.\n')
         return false
