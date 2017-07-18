@@ -19,6 +19,6 @@ class message(object):
         for key_word in file:
         	if key_word in content:
         		return key_word
-        	else:
-        		return "message"
+        	
+       	return "message"
 
