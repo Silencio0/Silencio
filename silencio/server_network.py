@@ -2,6 +2,7 @@ import socket
 import sys
 import datetime
 import select
+import re
 from .server_active_user import active_user
 from .server_active_chatroom import active_chatroom
 
@@ -76,7 +77,8 @@ class network(object):
                         #determine what the message is for and perform that task
                         state = parse_message_type()
                         #finds the bracketed word, e.g /join [this] in_brackets = this
-                        in_brackets = re.search(r"\[([A-Za-z0-9]+)\]", data)
+                        m = re.search(r"\[([A-Za-z0-9]+)\]", data)
+                        in_brackets = m.group(1)
                         if state == "/join":
                             join()
                         elif state == "/create":
