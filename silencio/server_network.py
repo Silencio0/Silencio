@@ -211,14 +211,24 @@ class network(object):
         
     def send_msg(self, in_user, in_message):
         """ Function to send a formatted message to a socket. Sends a tuple of (user, timestamp, text) as unformatted bytes. """
+        
         port = in_user.assigned_port
-        port.send("\r" + '[' + str(in_message.sender.get_alias()) + ' : ' + str(in_message.timestamp) + ']' + in_message.string)
+
+        #check if message is blocked
+        blocked = database.retrieve_blocked_users(in_user.username)
+        if in_message.sender in blocked:
+            return False
+
+        #if not, send message
+        else:
+            port.send("\r" + '[' + str(in_message.sender.get_alias()) + ' : ' + str(in_message.timestamp) + ']'
+             + in_message.string)
+            return True
 
     def send_server_feedback(self, in_user, in_string):
         """ Function to send a message to a specific user to provide feedback on their action. ie moved to room or set alias, etc. """
         port = in_user.assigned_port
         port.send("\r" + '[SERVER : ' + datetime.now() + ']' + in_string)
-
 
     def create_chatroom(self, in_name, owning_user):
         """ Function to add an active chatroom """
@@ -238,10 +248,21 @@ class network(object):
 
     def destroy_chatroom(self, in_name):
         """ Function to remove an active chatroom. Looks up chatroom by name and removes it. Returns true if successful, false if not found. """
+        
+        #find default room to send users to
+        for room in self.num_active_chatrooms:
+            if room.name is 'default':    
+                default = room
 
         #find room and remove it
         for room in self.active_chatroom_list:
+                       
             if room.name is in_name:
+
+                #empty users into default room
+            for user in room.users:
+                user.current_room = default
+
                 self.active_chatroom_list.remove(room)
                 self.num_active_cahtrooms -= 1
                 sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
