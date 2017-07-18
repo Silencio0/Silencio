@@ -1,6 +1,7 @@
 import sys
 import socket
 import datetime
+from .server_database import database
 from .client_message import message
 from .client_message_table import message_table
 
@@ -43,8 +44,8 @@ class network(object):
         
     def login(input_user, input_pass):
         """ Function to send the login message to the server. Returns false if incorrect, True if correct. """
-        #login and stuff
-
+        
+    
     def register(input_user, input_pass):
         """ Function to send a register message to the server. Returns false if cannot be registered, True if registered. """
         #register and login and stuff
