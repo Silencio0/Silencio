@@ -93,30 +93,51 @@ class network(object):
                         
                         data = data.split()
                         #seperate data by word
-                        try:
-                            #need this for /login username password
-                            user_name = data[1]     
-                            passkey = data[2]
-                        except:
-                            print("not enough arguments")
+                        
 
                         #performs command actions
                         if state == "/join":
-                            join()
+                            if active_chatroom.add_user(active_user) == True:
+                                send_server_feedback(active_user, "Successfully joined chatroom "+ in_brackets)
+                            else:
+                                send_server_feedback(active_user, "Failed to join chatroom "+ in_brackets)
                         elif state == "/create":
-                            create()
+                            create_chatroom(in_brackets, active_user)
                         elif state == "/set_alias":
                             server_database.set_alias(in_brackets, username)
                         elif state == "/block":
-                            block()
+                            if database.retrieve_blocked_user(active_user, in_brackets) == True:
+                                send_server_feedback(active_user, "Blocked " + in_brackets)
+                            else:
+                                send_server_feedback(active_user, "Could not block " + in_brackets)
                         elif state == "/unblock":
-                            unblock()
+                            if database.unblock_user(active_user, in_brackets) == True:
+                                send_server_feedback(active_user, "Unblocked " + in_brackets)
+                            else:
+                                send_server_feedback(active_user, in_brackets + " is not blocked")
                         elif state == "/delete":
-                            delete()
+                            if active_user == active_chatroom.owner:
+                                if destroy_chatroom(in_brackets) == True:
+                                    send_server_feedback(active_user, "Destroyed chatroom: " + in_brackets)
+                            else:
+                                send_server_feedback(active_user, "Chatroom: " + in_brackets + 
+                                " could not be destroyed. Either the chatroom doesn't exist or you are not the owner.")
                         elif state == "/login":
+                            try:
+                            #need this for /login username password
+                                user_name = data[1]     
+                                passkey = data[2]
+                            except:
+                                send_server_feedback(active_user, "not enough login information.  Try /login username password")
                             if login(user_name, passkey) == 1:
                                 print ("successfully logged on")
                         elif state == "/register":
+                            try:
+                            #need this for /login username password
+                                user_name = data[1]     
+                                passkey = data[2]
+                            except:
+                                print("not enough arguments")
                             register()
                         #I dont think this should be destroying data
                         #parseMessage returns 'message' if keywords aren't found
@@ -142,12 +163,12 @@ class network(object):
             if userinfo[1] == passkey:
                 return True
             else:
+                send_server_feedback(active_user, "Incorrect password \n")
                 sys.stderr.write("Incorrect password querry\n")
                 return False
         except:
             #query_name couldn't find username, error message already in that function
             #try / except is here to avoid crashing when username is incorrect
-            print("\n")
             return False
 
     def register(self, in_user, user_name, passkey):
