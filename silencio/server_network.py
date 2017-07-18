@@ -3,6 +3,7 @@ import sys
 import datetime
 import select
 import re
+from server_database import database
 from .server_active_user import active_user
 from .server_active_chatroom import active_chatroom
 from .server_message import message
@@ -79,19 +80,39 @@ class network(object):
                         state = content.parse_message_type()
                         #finds the bracketed word, e.g /join [this] in_brackets = this
                         m = re.search(r"\[([A-Za-z0-9]+)\]", data)
-                        in_brackets = m.group(1)
+                        if m:
+                            in_brackets = m.group(1)
+                        
+                        data = data.split()
+                        #seperate data by word
+                        try:
+                            #need this for /login username password
+                            user_name = data[1]     
+                            passkey = data[2]
+                        except:
+                            print("not enough arguments")
+
+                        #performs command actions
                         if state == "/join":
                             join()
                         elif state == "/create":
                             create()
                         elif state == "/set_alias":
-                            alias = in_brackets
+                            server_database.set_alias(in_brackets, username)
                         elif state == "/block":
                             block()
                         elif state == "/unblock":
                             unblock()
                         elif state == "/delete":
                             delete()
+                        elif state == "/login":
+                            if login(user_name, passkey) == 1:
+                                print ("successfully logged on")
+                        elif state == "/register":
+                            register()
+                        #I dont think this should be destroying data
+                        #parseMessage returns 'message' if keywords aren't found
+                        #so the message should be broadcasted here
                         else:
                             destroy_data()
                 except:
@@ -104,7 +125,28 @@ class network(object):
         for s in errored:
             #handle socket errors
             dostuff()
-
+    def login(self, user_name, passkey):
+        """ Login function returns 1 if Username/Password match otherwise 0 """
+        try:
+            #poll database for user ifo
+            userinfo = server_database.query_name(user_name)
+            if userinfo[1] == passkey:
+                return 1
+            else:
+                print("Incorrect password")
+                return 0
+        except:
+            #query_name couldn't find username, error message already in that function
+            #try / except is here to avoid crashing when username is incorrect
+            print("\n")
+            return 0
+    def register(self, user_name, passkey):
+        """ Register function returns 1 if successfully registered otherwise 0 """
+        #store desired username and password in temp user, default alias to username
+        to_register = stored_user(user_name, passkey, user_name)
+        if server_database.insert(to_register) == 1:
+            print ("Successfully registered with username: " + user_name
+             + " to set an alias type /set_alias")
 
     def broadcast(self, in_message, in_room):
         """ Broadcast function for bradcasting a message to a chatroom. """

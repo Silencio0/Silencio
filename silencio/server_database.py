@@ -22,8 +22,10 @@ class database(object):
             self.cursor.execute("""INSERT into users VALUES (NULL, %s, %s, %s)""",(user.name,
                 user.password,user.alias))
             self.con.commit()
+            return 1
         else:
             print ("ID already taken")
+            return 0
 
 #query finds a user given the id and returns the user if found
     def query_id(self, id):
