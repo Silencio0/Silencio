@@ -31,6 +31,10 @@ class network(object):
         #add initial connection port to connections for monitoring
         self.connection_list = [initial_sock]
 
+        #init default chatroom
+        admin = active_user('admin', 'NULL', 'localhost')
+        default_room = self.create_chatroom(default, admin)
+
     def __init__ (self, server_addr):
         """ Network constructor with inputted server address formatted like ('localhost', 7700) """
 
@@ -49,6 +53,10 @@ class network(object):
         
         #add initial connection port to connections for monitoring
         self.connection_list = [initial_sock]
+
+        #init default chatroom
+        admin = active_user('admin', 'NULL', 'localhost')
+        default_room = self.create_chatroom('default', admin)
 
     def listen (self):
         """function that listens to all connections for incoming traffic. Also listens to initial connection port. """ 
@@ -125,6 +133,7 @@ class network(object):
         for s in errored:
             #handle socket errors
             dostuff()
+<<<<<<< HEAD
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
@@ -150,12 +159,32 @@ class network(object):
 
     def broadcast(self, in_message, in_room):
         """ Broadcast function for bradcasting a message to a chatroom. """
+=======
+
+    def broadcast(self, in_message, in_room_name):
+        """ Broadcast function for bradcasting a message to a chatroom. Takes a message class and a room name string. Returns true if succeeds, false if room is not found."""
+>>>>>>> 560c5b623b3d407d9209588b793309c04ef58a9d
         
         #lookup chatroom
-        
-        #for all active users in chatroom, send message
+        room_found = False
+        for room in active_chatroom_list:
+            if room.name is in_room_name:
+                room_found = True
+                break
 
-        #record to chat log 
+        #if chatroom does not exist, return false
+        if room_found is False:
+            return False
+
+        #send message to all users in the room
+        else:
+            for user in room.users:
+                if user is not in_message.sender:
+                    send_msg(user, in_message)
+                
+        #record to chat log
+
+        return True
 
     def recv_msg(self, sock, msglen):
         """ Function to recieve a message from a socket as seperate parts. Returns a message class """                
@@ -178,12 +207,32 @@ class network(object):
 
         return newmessage
         
-    def send_msg(self, sock, user, timestamp, text):
+    def send_msg(self, in_user, in_message):
         """ Function to send a formatted message to a socket. Sends a tuple of (user, timestamp, text) as unformatted bytes. """
-        sock.send("\r" + '[' + str(user.get_alias()) + ' : ' + str(timestamp) + ']' + text)
+        in_user.assigned_port.send("\r" + '[' + str(in_message.sender.get_alias()) + ' : ' + str(in_message.timestamp) + ']' + in_message.string)
 
     def create_chatroom(self, in_name, owning_user):
         """ Function to add an active chatroom """
+    
+        #check if name taken
+        for room in self.active_chatroom_list:
+            if room.name is in_name:
+                return False
 
-    def destroy_chatroom(self, room_name):
-        """ Function to add an active chatroom """
+        #create and return room
+        newroom = active_chatroom(in_name, owning_user)
+        self.active_chatroom_list.append(newroom)
+        self.num_active_chatrooms += 1
+
+    def destroy_chatroom(self, in_name):
+        """ Function to remove an active chatroom. Looks up chatroom by name and removes it. Returns true if successful, false if not found. """
+
+        #find room and remove it
+        for room in self.active_chatroom_list:
+            if room.name is in_name:
+                self.active_chatroom_list.remove(room)
+                self.num_active_cahtrooms -= 1
+                return True
+
+        #room not found
+        return false
