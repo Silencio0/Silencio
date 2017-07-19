@@ -25,12 +25,6 @@
     <Compile Include="client_interface.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="client_message.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="client_message_table.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="client_network.py">
       <SubType>Code</SubType>
     </Compile>
