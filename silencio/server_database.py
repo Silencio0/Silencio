@@ -32,7 +32,7 @@ class database(object):
 
         #If a user is found, return it
         if temp is not None:
-            temp_user = user(temp[1],temp[2], temp[3]) 
+            temp_user = stored_user(temp[1],temp[2], temp[3]) 
             return temp_user
         else:
             print ("No User Matching That ID")
@@ -100,20 +100,20 @@ class database(object):
         list_blocked = self.retrieve_blocked_users(blocker)
         blocked_id =  str(self.retrieve_id(blocked))
         
-        if  list_blocked is  None:
+        if  list_blocked is  None:                #if no one is blocked yet, start new list
             list_blocked = []
         else:
             list_blocked = list_blocked.split(",")
 
-        if blocked_id in list_blocked:
+        if blocked_id in list_blocked:            #checks to see if user is already blocked
             print("User is Already Blocked")
             return False
         else:
-            list_blocked.append(blocked_id)
+            list_blocked.append(blocked_id)       #adds user to list of blocked users
             list_blocked = ",".join(list_blocked)
             if list_blocked[0] == ',': del list_blocked[0]
             self.cursor.execute("""UPDATE users SET blocked_users = (%s) WHERE name = (%s)""", (list_blocked, blocker.name))
-            self.con.commit()
+            self.con.commit()                     #commits block
             return True
 
 
@@ -123,17 +123,17 @@ class database(object):
         list_blocked = self.retrieve_blocked_users(blocker)
         blocked_id =  str(self.retrieve_id(blocked))
 
-        if  list_blocked is not None:
+        if  list_blocked is not None:             #checks to see if any users are blocked
             list_blocked = list_blocked.split(",")
-            if blocked_id in list_blocked:
+            if blocked_id in list_blocked:        #checks to see if specific user is blocked
                 list_blocked.remove(blocked_id)
-                if list_blocked:
+                if list_blocked:                  #if there are still blocked users, add them back to the db
                     list_blocked = ",".join(list_blocked)
                     if list_blocked[0] == ',': del list_blocked[0]
                 else:
                     list_blocked = None    
                 self.cursor.execute("""UPDATE users SET blocked_users = (%s) WHERE name = (%s)""", (list_blocked, blocker.name))
-                self.con.commit()
+                self.con.commit()                 #commit changes to the db
                 return True
             else: 
                 print("User is not blocked")
@@ -152,7 +152,6 @@ class database(object):
             if blocked_id in list_blocked: return True
         else:
             return False
-
 
 #returns total number of users
     def num_users(self):
