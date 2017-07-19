@@ -24,17 +24,18 @@ password = 'pass'
 
 
 net = network(server_ip, server_port)
+interf = interface()
 
 if not net:
     print('Failed to connect to server\n')
     
 
-if net.login(username, password):
-    print ('Successfully logged in\n')
-else:
-    print ('failed to log in\n')
+interf.user_login()
 
 while True:
+
+    interf.user_listen()    
+
     out = net.listen()
     if out is not True and out is not False and out is not []:
         print(out)
