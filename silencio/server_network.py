@@ -3,7 +3,8 @@ import sys
 import datetime
 import select
 import re
-from server_database import database
+from .server_database import database
+from .server_stored_user import stored_user
 from .server_active_user import active_user
 from .server_active_chatroom import active_chatroom
 from .server_message import message
@@ -33,7 +34,7 @@ class network(object):
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
-        default_room = self.create_chatroom(default, admin)
+        self.default_room = self.create_chatroom(default, admin)
 
     def __init__ (self, server_addr):
         """ Network constructor with inputted server address formatted like ('localhost', 7700) """
@@ -56,7 +57,7 @@ class network(object):
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
-        default_room = self.create_chatroom('default', admin)
+        self.default_room = self.create_chatroom('default', admin)
 
     def listen (self):
         """function that listens to all connections for incoming traffic. Also listens to initial connection port. """ 
@@ -78,9 +79,7 @@ class network(object):
             
             #else we read message from the socket and handle accordingly
             else:
-                
-            
-                
+                  
                 try:
                     #recieve message and find metadata classes
                     incoming = self.recv_msg(s, 4096)
@@ -102,7 +101,7 @@ class network(object):
                         #seperate data by word
                         
 
-                        #join room command handling
+                        #join room command handling - fixed
                         if state == "/join":
                             
                             #if arguments exist
@@ -111,7 +110,7 @@ class network(object):
                                 #find room that matches argument
                                 join_room = False
                                 for room in active_chatroom_list:
-                                    if room.name is args[1]:
+                                    if room.name is in_brackets:
                                         join_room = room
                             
                                 #if room cannot be found
@@ -133,21 +132,21 @@ class network(object):
                             else:
                                 send_server_feedback(sent_by, 'Please retry command and include arguments in the form /join [roomname]\n')
                             
-                        #create room command handling
+                        #create room command handling - fixed
                         elif state == "/create":
 
                             #If arguments exist
                             if args:
 
                                 #Check if name taken
-                                desired_name = args[1]
+                                desired_name = in_brackets
                                 name_taken = False
                                 for room in active_chatroom_list:
                                     if room.name == desired_name:
                                         name_taken = True
                                 
                                 #If name is taken
-                                if name_taken:
+                                if name_taken or desired_name is 'default' or desired_name is '0':
                                     send_server_feedback(sent_by, 'Room already exists with that name.')
                                 
                                 #Else create room with vacant name
@@ -159,14 +158,14 @@ class network(object):
                             else:
                                 send_server_feedback(sent_by, 'Please try command again with room name in brackets. ie /create [roomname].\n')
                             
-                        #set alias command handling
+                        #set alias command handling - fixed
                         elif state == "/set_alias":
 
                             #if arguments exist
                             if args:
 
                                 #if alias is outlawed
-                                banned_names = ['admin', 'administrator', ' ', 'default']
+                                banned_names = ('admin', 'administrator', '', ' ', 'default', 'server', 'SERVER', '\n', '\r')
                                 if in_brackets in banned_names:
                                     (sent_by, 'Cannot set alias to that name.\n')
 
@@ -200,38 +199,55 @@ class network(object):
                                 if destroy_chatroom(in_brackets) == True:
                                     send_server_feedback(active_user, "Destroyed chatroom: " + in_brackets)
                             else:
-                                send_server_feedback(active_user, "Chatroom: " + in_brackets + 
+                                self.send_server_feedback(active_user, "Chatroom: " + in_brackets + 
                                 " could not be destroyed. Either the chatroom doesn't exist or you are not the owner.")
 
                         #login user command handling
                         elif state == "/login":
+
+                            #try to find needed args
                             try:
-                            #need this for /login username password
-                                user_name = data[1]     
-                                passkey = data[2]
+                                failed = False
+                                user_name = args.group(1)     
+                                passkey = args.group(2)
+
                             except:
-                                send_server_feedback(active_user, "not enough login information.  Try /login username password")
-                            if login(user_name, passkey) == 1:
-                                print ("successfully logged on")
+                                self.send_server_feedback(sent_by, "not enough login information.  Try /login [username] [password]\n")
+                                failed = True
+
+                            #If login succeeds
+                            if not failed and login(user_name, passkey) is True:
+
+                                #set active user to have username and be in a room
+                                sent_by.username = user_name
+                                sent_by.current_room = self.default_room
+                                self.default_room.users.append(sent_by)
+                                send_server_feedback(sent_by, 'Successfully logged in.\n')
+
+                            #if login fails
+                            elif not failed:
+                                self.send_user_feedback(sent_by, 'Failed to log in. Incorrect username and/or password')
 
                         #register user command handling
                         elif state == "/register":
+
+                            #find command arguments
                             try:
-                            #need this for /login username password
-                                user_name = data[1]     
-                                passkey = data[2]
+                                failed = False
+                                user_name = args.group(1)     
+                                passkey = args.group(2)
                             except:
-                                print("not enough arguments")
-                            register()
-<<<<<<< HEAD
-                        #I dont think this should be destroying data
-                        #parseMessage returns 'message' if keywords aren't found
-                        #so the message should be broadcasted here
-                        
-=======
+                                self.send_server_feedback(sent_by, "not enough login information.  Try /register [username] [password]\n")
+                                failed = True
+
+                            if not failed and len(user_name) < 16 and len(passkey) < 16 :
+                                self.register(sent_by, user_name, passkey)
+                                
+
+                            else:
+                                self.send_server_feedback(sent_by, 'Unable to register account with those parameters. Username and password must both be less than 16 characters\n')
                         
                         #Else we broadcast regular message
->>>>>>> 5633e9791581491c747aa13d6945deac526a913d
                         else:
                             broadcast(data, data.sent_in)
                             
@@ -241,12 +257,33 @@ class network(object):
 
         for s in writeable:
             #handle writables
-            dostuff()
+            dos_nothing = True
 
         for s in errored:
             #handle socket errors
-            dostuff()
+
+            #find owner of the port
+            for active_u in self.active_user_list:
+                if active_u.assigned_port is sock:
+                    user = active_u
+                    chatroom = active_u.current_room
+                    break
+
+            #If from not logged in user, keep empty username and room
+            else:
+                user = []
+                chatroom = False
     
+            #remove them from any active chatrooms
+            if chatroom:
+                chatroom.users.remove(user)
+
+            #disconnect user
+            try:
+                self.send_server_feedback(user, 'Error in network, disconnecting\n')
+
+            s.close()
+
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
@@ -255,7 +292,6 @@ class network(object):
             if userinfo[1] == passkey:
                 return True
             else:
-                send_server_feedback(active_user, "Incorrect password \n")
                 sys.stderr.write("Incorrect password querry\n")
                 return False
         except:
@@ -265,16 +301,31 @@ class network(object):
 
     def register(self, in_user, user_name, passkey):
         """ Register function returns true if successfully registered otherwise false """
+                
+        banned_names = ('admin', 'administrator', 'server', 'SERVER', ' ', '0', 0, '', '\n', '\r', '\\')
+
+        if user_name in banned_names:
+            self.send_server_feedback(in_user, 'Cannot create an account with that name.\n')
+            return False
+
         #store desired username and password in temp user, default alias to username
-        to_register = stored_user(user_name, passkey, user_name)                            ####The idea was to only talk to database, not the stored user class!####
-        if server_database.insert(to_register) == 1:
+        to_register = database.stored_user(user_name, passkey, user_name) 
+
+        #if successfully registered
+        if server_database.insert(to_register) is True:
             sys.stderr.write ("Successfully registered with username: " + user_name
-             + " to set an alias type /set_alias")
-            send_server_feedback(active_user, "Successfully registered with username: " + user_name
-            + "to set an alias type /set_alias [alias here]")
+                + " to set an alias type /set_alias")
+            self.send_server_feedback(in_user, 'successfully registered as new user!\n')
             in_user.username = user_name
             in_user.alias = user_name
-
+            in_user.current_room = self.default_room
+            self.default_room.users.append(in_user)
+            return True
+        
+        else:
+            self.send_server_feedback(in_user, 'Failed to register with that username. Username already taken.\n')
+            return False
+        
     def broadcast(self, in_message, in_room_name):
         """ Broadcast function for bradcasting a message to a chatroom. Takes a message class and a room name string. Returns true if succeeds, false if room is not found."""
         
@@ -369,34 +420,22 @@ class network(object):
     def destroy_chatroom(self, in_name):
         """ Function to remove an active chatroom. Looks up chatroom by name and removes it. Returns true if successful, false if not found. """
         
-        #find default room to send users to
-        for room in self.num_active_chatrooms:
-            if room.name is 'default':    
-                default = room
-
         #find room and remove it
         for room in self.active_chatroom_list:
             if room.name is in_name:
 
                 #empty users into default room
                 for user in room.users:
-                    user.current_room = default
+                    user.current_room = self.default_room
+                    self.default_room.users.append(user)
+                    room.users.remove(user)
                 
                 #destroy room
                 self.active_chatroom_list.remove(room)
                 self.num_active_chatrooms -= 1
                 sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
                 return True
-<<<<<<< HEAD
 
-
-                    self.active_chatroom_list.remove(room)
-                    self.num_active_cahtrooms -= 1
-                    sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
-                    return True
-=======
-
->>>>>>> 5633e9791581491c747aa13d6945deac526a913d
 
         #room not found
         sys.stderr.write('Failed to destroy chatroom named ' + in_name + ' as it was not found.\n')
