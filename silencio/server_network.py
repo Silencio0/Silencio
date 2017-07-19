@@ -76,45 +76,125 @@ class network(object):
                 active_user_list.append(new_user)
                 num_active_users +=1
             
-            #else we read message from the socket
+            #else we read message from the socket and handle accordingly
             else:
-                #receive data with buffer
+                
+            
+                
                 try:
-                    data = self.recv_msg(s, 4096)
-                    if data.string:
-                        #message not empty
-                        content = data
+                    #recieve message and find metadata classes
+                    incoming = self.recv_msg(s, 4096)
+                    sent_by = incoming.sender
+                    text = incoming.string
+                    sent_in = incoming.sent_in                    
+                    
+                    #If message not empty
+                    if text:
                         #determine what the message is for and perform that task
-                        state = content.parse_message_type()
+                        state = incoming.parse_message_type()
                         #finds the bracketed word, e.g /join [this] in_brackets = this
-                        m = re.search(r"\[([A-Za-z0-9]+)\]", data)
-                        if m:
-                            in_brackets = m.group(1)
+                        args = re.search(r"\[([A-Za-z0-9]+)\]", text)
+                        if args:
+                            in_brackets = args.group(1)
                         
-                        data = data.split()
+                        
+                        text = text.split()
                         #seperate data by word
                         
 
-                        #performs command actions
+                        #join room command handling
                         if state == "/join":
-                            if active_chatroom.add_user(active_user) == True:
-                                send_server_feedback(active_user, "Successfully joined chatroom "+ in_brackets)
+                            
+                            #if arguments exist
+                            if args:
+                                
+                                #find room that matches argument
+                                join_room = False
+                                for room in active_chatroom_list:
+                                    if room.name is args[1]:
+                                        join_room = room
+                            
+                                #if room cannot be found
+                                if join_room == False:
+                                    send_server_feedback(sent_by, "No room with that name can be found.\n")
+
+                                #if forbidden room
+                                elif join_room == 0:
+                                    send_server_feedback(sent_by, "That room is not for you.\n")
+                                
+                                #else, move user to room
+                                else:
+                                    sent_in.users.remove(sent_by)
+                                    sent_by.current_room = join_room
+                                    join_room.users.append(sent_by)
+                                    send_server_feedback(sent_by, 'Joined room.\n')
+           
+                            #if no arguments found
                             else:
-                                send_server_feedback(active_user, "Failed to join chatroom "+ in_brackets)
+                                send_server_feedback(sent_by, 'Please retry command and include arguments in the form /join [roomname]\n')
+                            
+                        #create room command handling
                         elif state == "/create":
-                            create_chatroom(in_brackets, active_user)
+
+                            #If arguments exist
+                            if args:
+
+                                #Check if name taken
+                                desired_name = args[1]
+                                name_taken = False
+                                for room in active_chatroom_list:
+                                    if room.name == desired_name:
+                                        name_taken = True
+                                
+                                #If name is taken
+                                if name_taken:
+                                    send_server_feedback(sent_by, 'Room already exists with that name.')
+                                
+                                #Else create room with vacant name
+                                else:
+                                    create_chatroom(in_brackets, sent_by)
+                                    send_server_feedback(sent_by, 'Room created.\n')
+
+                            #If no arguments found
+                            else:
+                                send_server_feedback(sent_by, 'Please try command again with room name in brackets. ie /create [roomname].\n')
+                            
+                        #set alias command handling
                         elif state == "/set_alias":
-                            server_database.set_alias(in_brackets, username)
+
+                            #if arguments exist
+                            if args:
+
+                                #if alias is outlawed
+                                banned_names = ['admin', 'administrator', ' ', 'default']
+                                if in_brackets in banned_names:
+                                    (sent_by, 'Cannot set alias to that name.\n')
+
+                                #Alias allowed and set
+                                else:
+                                    sent_by.alias = in_brackets
+                                    server_database.set_alias(in_brackets, username)
+                                    sent_by.check_alias()
+
+                            #if no args
+                            else:
+                                send_server_feedback(sent_by, 'Please try command again with desired alias in brackets. ie /set_alias [pseudonym].\n')
+
+                        #block user command handling
                         elif state == "/block":
                             if database.retrieve_blocked_user(active_user, in_brackets) == True:
                                 send_server_feedback(active_user, "Blocked " + in_brackets)
                             else:
                                 send_server_feedback(active_user, "Could not block " + in_brackets)
+
+                        #unblock user command handling
                         elif state == "/unblock":
                             if database.unblock_user(active_user, in_brackets) == True:
                                 send_server_feedback(active_user, "Unblocked " + in_brackets)
                             else:
                                 send_server_feedback(active_user, in_brackets + " is not blocked")
+
+                        #delete room command handling
                         elif state == "/delete":
                             if active_user == active_chatroom.owner:
                                 if destroy_chatroom(in_brackets) == True:
@@ -122,6 +202,8 @@ class network(object):
                             else:
                                 send_server_feedback(active_user, "Chatroom: " + in_brackets + 
                                 " could not be destroyed. Either the chatroom doesn't exist or you are not the owner.")
+
+                        #login user command handling
                         elif state == "/login":
                             try:
                             #need this for /login username password
@@ -131,6 +213,8 @@ class network(object):
                                 send_server_feedback(active_user, "not enough login information.  Try /login username password")
                             if login(user_name, passkey) == 1:
                                 print ("successfully logged on")
+
+                        #register user command handling
                         elif state == "/register":
                             try:
                             #need this for /login username password
@@ -139,13 +223,14 @@ class network(object):
                             except:
                                 print("not enough arguments")
                             register()
-                        #I dont think this should be destroying data
-                        #parseMessage returns 'message' if keywords aren't found
-                        #so the message should be broadcasted here
+                        
+                        #Else we broadcast regular message
                         else:
-                            destroy_data()
+                            broadcast(data, data.sent_in)
+                            
                 except:
-                    print("no data recieved\n")
+                    sys.stderr.write("no data recieved\n")
+                    return False
 
         for s in writeable:
             #handle writables
@@ -210,22 +295,27 @@ class network(object):
     def recv_msg(self, sock, msglen):
         """ Function to recieve a message from a socket as seperate parts. Returns a message class """                
         
-        
+        #Read raw data from socket
         data = sock.recv(msglen)
 
+        #Find message metadata
         for active_u in self.active_user_list:
+
+            #If regular message, bind user and room
             if active_u.assigned_port is sock:
-                user = active_u.username
+                user = active_u
                 chatroom = active_u.current_room
                 break
+
+            #If from not logged in user, keep empty username and room
             else:
-                user = ' '
+                user = []
                 chatroom = 0
         
         timestamp = str(datetime.now())
-
         text = str(data)
         
+        #Build message class with data
         newmessage = message(user, chatroom, text, timestamp)
 
         return newmessage
