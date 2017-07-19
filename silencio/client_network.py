@@ -45,7 +45,13 @@ class network(object):
         
     def login(self, input_user, input_pass):
         """ Function to send the login message to the server. Returns false if incorrect, True if correct. """
-        #login and stuff
+        try:
+            self.send_message('/login [' + input_user + '] [' + input_pass + ']\r')
+
+        except: 
+            return False
+
+        return True
 
     def register(self, input_user, input_pass):
         """ Function to send a register message to the server. Returns false if cannot be registered, True if registered. """
@@ -64,12 +70,14 @@ class network(object):
                 send_message(message)
                 sel.message_q.remove(message)
             
-            return
+            return True
 
         if self.connection in errored:
 
             self.disconnect()
             return 'Connection errored out'
+
+        return False
 
     def send_message(self,input_message):
         """ Function that sends messages to the server. Calls listen first to make sure port is free. Returns false if it Fails, true otherwise. """
