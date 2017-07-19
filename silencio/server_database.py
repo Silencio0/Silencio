@@ -58,6 +58,33 @@ class database(object):
         else:
             print ("No id matching that id")
 
+#Returns a password of a certain user.
+    def retrieve_password(self, user):
+        self.cursor.execute("""SELECT password from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
+#Returns alias of a certain user.
+    def retrieve_alias(self, user):
+        self.cursor.execute("""SELECT alias from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
+#Returns all of the blocked users (in a string of IDs) of a certain user.
+    def retrieve_blocked_users(self, user):
+        self.cursor.execute("""SELECT blocked_users from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
 #sets an alias for a user    
     def set_alias(self, alias, user):
         self.cursor.execute("""UPDATE users SET alias = (%s) WHERE name = (%s)""", (alias, user.name))
@@ -125,14 +152,7 @@ class database(object):
             if blocked_id in list_blocked: return True
         else:
             return False
-#Returns all of the blocked users (in a string of IDs) of a certain user.
-    def retrieve_blocked_users(self, user):
-        self.cursor.execute("""SELECT blocked_users from users WHERE name=(%s)""",(user.name))
-        temp = self.cursor.fetchone()
-        if temp is not None:
-            return temp[0]
-        else:
-            return None
+
 
 #returns total number of users
     def num_users(self):
