@@ -22,8 +22,10 @@ class database(object):
             self.cursor.execute("""INSERT into users VALUES (NULL, %s, %s, %s, NULL)""",(user.name,
                 user.password,user.alias))
             self.con.commit()
+            return True
         else:
             print ("ID already taken")
+            return False
 
 #query finds a user given the id and returns the user if found
     def query_id(self, id):
@@ -44,10 +46,11 @@ class database(object):
         
         #If a user is found, return it
         if temp is not None:
-            temp_user = user(temp[1],temp[2], temp[3]) 
+            temp_user = stored_user(temp[1],temp[2], temp[3]) 
             return temp_user
         else:
             print ("No User Matching That Name") 
+            return False
 
 #retrieves an id of a given user 
     def retrieve_id(self, user):
