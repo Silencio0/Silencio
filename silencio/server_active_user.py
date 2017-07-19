@@ -9,7 +9,7 @@ class active_user(object):
         self.username = NULL
         self.assigned_port = sock        
         self.client_addr = addr
-        self.current_room = 0
+        self.current_room = []
         self.blocked_users
 
     def __init__(self, user, sock, addr):
@@ -17,7 +17,7 @@ class active_user(object):
         self.username = user
         self.assigned_port = sock        
         self.client_addr = addr
-        self.current_room = 0
+        self.current_room = []
         self.check_alias()
         self.blocked_users
 
