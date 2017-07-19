@@ -39,7 +39,7 @@ class active_user(object):
 
     def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
-        self.alias = database.get_alias(username)
+        self.alias = database.retrieve_alias(username)
 
 
     def set_port(self, input_port):
@@ -52,7 +52,7 @@ class active_user(object):
 
     def log_in(in_user, in_pass):
         """Funtion to log in an active user. Checks login credentials against stored values. Sets the user data if correct, returns false if not"""
-        login_info = database.get_password(in_user)
+        login_info = database.retrieve_password(in_user)
 
         #if username not in database
         if login_info is False:

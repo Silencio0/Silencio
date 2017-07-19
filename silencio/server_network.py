@@ -282,6 +282,7 @@ class network(object):
                 #empty users into default room
                 for user in room.users:
                     user.current_room = default
+<<<<<<< HEAD
                 
                 #destroy room
                 self.active_chatroom_list.remove(room)
