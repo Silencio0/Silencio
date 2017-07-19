@@ -37,7 +37,7 @@ class interface(object):
 
     def print_message(self, message):
     	if message:
-    		print(message.content)
+    		print(message)
     	
 
 
