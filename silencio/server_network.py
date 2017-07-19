@@ -142,6 +142,7 @@ class network(object):
                         #I dont think this should be destroying data
                         #parseMessage returns 'message' if keywords aren't found
                         #so the message should be broadcasted here
+                        
                         else:
                             destroy_data()
                 except:
@@ -178,6 +179,8 @@ class network(object):
         if server_database.insert(to_register) == 1:
             sys.stderr.write ("Successfully registered with username: " + user_name
              + " to set an alias type /set_alias")
+            send_server_feedback(active_user, "Successfully registered with username: " + user_name
+            + "to set an alias type /set_alias [alias here]")
             in_user.username = user_name
             in_user.alias = user_name
 
