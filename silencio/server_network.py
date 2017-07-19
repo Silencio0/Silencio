@@ -79,9 +79,7 @@ class network(object):
             
             #else we read message from the socket and handle accordingly
             else:
-                
-            
-                
+                  
                 try:
                     #recieve message and find metadata classes
                     incoming = self.recv_msg(s, 4096)
@@ -259,12 +257,33 @@ class network(object):
 
         for s in writeable:
             #handle writables
-            dostuff()
+            dos_nothing = True
 
         for s in errored:
             #handle socket errors
-            dostuff()
+
+            #find owner of the port
+            for active_u in self.active_user_list:
+                if active_u.assigned_port is sock:
+                    user = active_u
+                    chatroom = active_u.current_room
+                    break
+
+            #If from not logged in user, keep empty username and room
+            else:
+                user = []
+                chatroom = False
     
+            #remove them from any active chatrooms
+            if chatroom:
+                chatroom.users.remove(user)
+
+            #disconnect user
+            try:
+                self.send_server_feedback(user, 'Error in network, disconnecting\n')
+
+            s.close()
+
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
