@@ -56,7 +56,13 @@ class network(object):
 
     def register(input_user, input_pass):
         """ Function to send a register message to the server. Returns false if cannot be registered, True if registered. """
-        #register and login and stuff
+        try:
+            self.send_message('/register [' + input_user + '] [' + input_pass + ']\r')
+
+        except: 
+            return False
+
+        return True
 
     def listen(self):
         """ Function that checks the network port for incoming message and availability. Creates new messages for incoming messages. Appends incoming messages to message table. """

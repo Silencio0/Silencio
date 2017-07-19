@@ -12,5 +12,11 @@ Created for:
 Seng 299 Summer 2017
 """
 
-from .server_network import server_network
-from .server_database import server_database
+from .server_network import network
+from .server_database import database
+
+base = database()
+net = network('localhost')
+
+while True:
+    net.listen()

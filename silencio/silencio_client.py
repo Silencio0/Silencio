@@ -16,7 +16,7 @@ from .client_interface import interface
 from .client_network import network
 
 server_ip = 'localhost'
-serverport = 7700
+serverport = 7600
 username = 'wat'
 password = 'pass'
 
@@ -36,6 +36,6 @@ else:
 
 while True:
     out = net.listen()
-    if out is not True and is not False and is not []:
+    if out is not True and out is not False and out is not []:
         print(out)
     
