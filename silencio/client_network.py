@@ -4,6 +4,7 @@ import datetime
 import select
 
 
+
 class network(object):
     """This class is designed to handle network message sending and recieving for the client end"""
 
@@ -53,7 +54,7 @@ class network(object):
 
         return True
 
-    def register(self, input_user, input_pass):
+    def register(input_user, input_pass):
         """ Function to send a register message to the server. Returns false if cannot be registered, True if registered. """
         #register and login and stuff
 

@@ -58,6 +58,33 @@ class database(object):
         else:
             print ("No id matching that id")
 
+#Returns a password of a certain user.
+    def retrieve_password(self, user):
+        self.cursor.execute("""SELECT password from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
+#Returns alias of a certain user.
+    def retrieve_alias(self, user):
+        self.cursor.execute("""SELECT alias from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
+#Returns all of the blocked users (in a string of IDs) of a certain user.
+    def retrieve_blocked_users(self, user):
+        self.cursor.execute("""SELECT blocked_users from users WHERE name=(%s)""",(user.name))
+        temp = self.cursor.fetchone()
+        if temp is not None:
+            return temp[0]
+        else:
+            return None
+        
 #sets an alias for a user    
     def set_alias(self, alias, user):
         self.cursor.execute("""UPDATE users SET alias = (%s) WHERE name = (%s)""", (alias, user.name))
@@ -69,7 +96,7 @@ class database(object):
     
         if blocker.name is blocked.name:
             print("Can't block yourself")
-            return
+            return False
         list_blocked = self.retrieve_blocked_users(blocker)
         blocked_id =  str(self.retrieve_id(blocked))
         
@@ -80,13 +107,14 @@ class database(object):
 
         if blocked_id in list_blocked:
             print("User is Already Blocked")
-            return
+            return False
         else:
             list_blocked.append(blocked_id)
             list_blocked = ",".join(list_blocked)
             if list_blocked[0] == ',': del list_blocked[0]
             self.cursor.execute("""UPDATE users SET blocked_users = (%s) WHERE name = (%s)""", (list_blocked, blocker.name))
             self.con.commit()
+            return True
 
 
 #unblocks a user(blocked) for another user(blocker)
@@ -106,11 +134,13 @@ class database(object):
                     list_blocked = None    
                 self.cursor.execute("""UPDATE users SET blocked_users = (%s) WHERE name = (%s)""", (list_blocked, blocker.name))
                 self.con.commit()
+                return True
             else: 
                 print("User is not blocked")
-                return
+                return False
         else: 
             print("No users blocked")
+            return False
 
 #Returns True or False is a user is blocked by another user.
     def is_blocked(self, blocker, blocked):
@@ -122,14 +152,7 @@ class database(object):
             if blocked_id in list_blocked: return True
         else:
             return False
-#Returns all of the blocked users (in a string of IDs) of a certain user.
-    def retrieve_blocked_users(self, user):
-        self.cursor.execute("""SELECT blocked_users from users WHERE name=(%s)""",(user.name))
-        temp = self.cursor.fetchone()
-        if temp is not None:
-            return temp[0]
-        else:
-            return None
+
 
 #returns total number of users
     def num_users(self):
