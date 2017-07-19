@@ -282,20 +282,13 @@ class network(object):
                 #empty users into default room
                 for user in room.users:
                     user.current_room = default
-<<<<<<< HEAD
                 
                 #destroy room
                 self.active_chatroom_list.remove(room)
-                self.num_active_cahtrooms -= 1
+                self.num_active_chatrooms -= 1
                 sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
                 return True
-=======
 
-                    self.active_chatroom_list.remove(room)
-                    self.num_active_cahtrooms -= 1
-                    sys.stderr.write('Successfully destroyed chat room named ' + in_name + '.\n')
-                    return True
->>>>>>> ae32c0380d0719a78270dba98a6e5d224c63490d
 
         #room not found
         sys.stderr.write('Failed to destroy chatroom named ' + in_name + ' as it was not found.\n')
