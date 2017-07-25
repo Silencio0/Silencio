@@ -1,4 +1,4 @@
-from .server_database import database
+from server.server_database import database
 
 class active_user(object):
     """Class for handling active users logged into the server. Contains all info needed during active use."""

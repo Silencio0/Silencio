@@ -3,11 +3,11 @@ import sys
 import datetime
 import select
 import re
-from .server_database import database
-from .server_stored_user import stored_user
-from .server_active_user import active_user
-from .server_active_chatroom import active_chatroom
-from .server_message import message
+from server.server_database import database
+from server.server_stored_user import stored_user
+from server.server_active_user import active_user
+from server.server_active_chatroom import active_chatroom
+from server.server_message import message
 
 class network(object):
     """Server network class that does all the hard stuff."""
