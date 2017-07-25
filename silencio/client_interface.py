@@ -1,5 +1,6 @@
 from .client_network import network
-
+import sys
+import select
 class interface(object):
     """Container for the basic text interface and its functions. Basically, just reads the messages to the command line"""
     
@@ -23,14 +24,20 @@ class interface(object):
 	    		print("Incorrect username/password\n")
  
     def user_listen(self):
-    	while True:
-    		user_message = input('Send message or enter command: ')
-    		if user_message:
-    			network.send_message(user_message)
+    	#listens for user input and sends message if there's input
+    	while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+    		user_input = sys.stdin.readline()
+    		if user_input:
+    			network.send_message(user_input)
+    	else:
+    		#listens for readable message and prints if available
+    		x = network.listen()
+    		if x != True and x != False and x != []:
+    			print_message(x)
 
     def print_message(self, message):
     	if message:
-    		print(message.content)
+    		print(message)
     	
 
 

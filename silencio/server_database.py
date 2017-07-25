@@ -34,7 +34,7 @@ class database(object):
 
         #If a user is found, return it
         if temp is not None:
-            temp_user = user(temp[1],temp[2], temp[3]) 
+            temp_user = stored_user(temp[1],temp[2], temp[3]) 
             return temp_user
         else:
             print ("No User Matching That ID")
@@ -46,7 +46,7 @@ class database(object):
         
         #If a user is found, return it
         if temp is not None:
-            temp_user = user(temp[1],temp[2], temp[3]) 
+            temp_user = stored_user(temp[1],temp[2], temp[3]) 
             return temp_user
         else:
             print ("No User Matching That Name") 
