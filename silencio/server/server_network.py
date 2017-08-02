@@ -30,7 +30,7 @@ class network(object):
         self.initial_sock.listen()    
         
         #add initial connection port to connections for monitoring
-        self.connection_list = [initial_sock]
+        self.connection_list.append(initial_sock)
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
@@ -53,7 +53,7 @@ class network(object):
         self.initial_sock.listen()
         
         #add initial connection port to connections for monitoring
-        self.connection_list = [initial_sock]
+        self.connection_list.append(initial_sock)
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
@@ -254,11 +254,13 @@ class network(object):
                 except:
                     sys.stderr.write("no data recieved\n")
                     return False
-
+        
+        #For all writeable ports, send messages if waiting.
         for s in writeable:
             #handle writables
             dos_nothing = True
 
+        #For all errored ports, remove them if they have an associated user.
         for s in errored:
             #handle socket errors
 
@@ -275,6 +277,8 @@ class network(object):
                 if errored_user.current_room is NULL:
                     errored_user.assigned_port.close()
                     active_user_list.remove(errored_user)
+                    connection_list.remove(s)
+                    num_active_users -= 1
 
                 #if port logged in
                 else:
@@ -283,6 +287,9 @@ class network(object):
 
                     errored_user.assigned_port.close()
                     active_user_list.remove(errored_user)
+                    connection_list.remove(s)
+
+                    num_active_users -= 1
 
                     
 
