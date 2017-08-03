@@ -9,7 +9,7 @@ import pymysql
 class database(object):
 
     #this will change if we run off nolans computer. will update if/when necessary
-    db = ("DESKTOP-UBQCG6M", "remoteUser", "test", "CHAT_DATABASE")
+    db = ("96.54.58.48", "remoteUser", "test", "CHAT_DATABASE")
 
     def __init__(self):
         self.con = pymysql.connect(*self.db)

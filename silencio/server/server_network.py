@@ -276,9 +276,9 @@ class network(object):
                 #if port not yet logged in
                 if errored_user.current_room is NULL:
                     errored_user.assigned_port.close()
-                    active_user_list.remove(errored_user)
-                    connection_list.remove(s)
-                    num_active_users -= 1
+                    self.active_user_list.remove(errored_user)
+                    self.connection_list.remove(s)
+                    self.num_active_users -= 1
 
                 #if port logged in
                 else:
@@ -286,10 +286,10 @@ class network(object):
                     remove_from.remove(errored_user)
 
                     errored_user.assigned_port.close()
-                    active_user_list.remove(errored_user)
-                    connection_list.remove(s)
+                    self.active_user_list.remove(errored_user)
+                    self.connection_list.remove(s)
 
-                    num_active_users -= 1
+                    self.num_active_users -= 1
 
                     
 
