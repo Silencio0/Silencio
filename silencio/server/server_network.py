@@ -3,11 +3,11 @@ import sys
 import datetime
 import select
 import re
-from .server_database import database
-from .server_stored_user import stored_user
-from .server_active_user import active_user
-from .server_active_chatroom import active_chatroom
-from .server_message import message
+from server.server_database import database
+from server.server_stored_user import stored_user
+from server.server_active_user import active_user
+from server.server_active_chatroom import active_chatroom
+from server.server_message import message
 
 class network(object):
     """Server network class that does all the hard stuff."""
@@ -30,7 +30,7 @@ class network(object):
         self.initial_sock.listen()    
         
         #add initial connection port to connections for monitoring
-        self.connection_list = [initial_sock]
+        self.connection_list.append(initial_sock)
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
@@ -53,7 +53,7 @@ class network(object):
         self.initial_sock.listen()
         
         #add initial connection port to connections for monitoring
-        self.connection_list = [initial_sock]
+        self.connection_list.append(initial_sock)
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
@@ -254,35 +254,49 @@ class network(object):
                 except:
                     sys.stderr.write("no data recieved\n")
                     return False
-
+        
+        #For all writeable ports, send messages if waiting.
         for s in writeable:
             #handle writables
             dos_nothing = True
 
+        #For all errored ports, remove them if they have an associated user.
         for s in errored:
             #handle socket errors
 
-            #find owner of the port
-            for active_u in self.active_user_list:
-                if active_u.assigned_port is sock:
-                    user = active_u
-                    chatroom = active_u.current_room
-                    break
+            #attempt to associate port with a user
+            errored_user = False
+            for active_u in active_user_list:
+                if active_u.assigned_port is s:
+                    errored_user = active_u
 
-            #If from not logged in user, keep empty username and room
-            else:
-                user = []
-                chatroom = False
-    
-            #remove them from any active chatrooms
-            if chatroom:
-                chatroom.users.remove(user)
+            #if we can associate the port with a user, disconnect them
+            if errored_user:
 
-            #disconnect user
-            try:
-                self.send_server_feedback(user, 'Error in network, disconnecting\n')
+                #if port not yet logged in
+                if errored_user.current_room is NULL:
+                    errored_user.assigned_port.close()
+                    active_user_list.remove(errored_user)
+                    connection_list.remove(s)
+                    num_active_users -= 1
 
-            s.close()
+                #if port logged in
+                else:
+                    remove_from = errored_user.current_room
+                    remove_from.remove(errored_user)
+
+                    errored_user.assigned_port.close()
+                    active_user_list.remove(errored_user)
+                    connection_list.remove(s)
+
+                    num_active_users -= 1
+
+                    
+
+
+
+
+
 
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """

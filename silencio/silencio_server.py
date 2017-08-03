@@ -12,11 +12,13 @@ Created for:
 Seng 299 Summer 2017
 """
 
-from .server_network import network
-from .server_database import database
+from server.server_network import network
+from server.server_database import database
 
-base = database()
-net = network('localhost')
 
-while True:
-    net.listen()
+if __name__ == "__main__":
+    base = database()
+    net = network('localhost')
+
+    while True:
+        net.listen()

@@ -1,4 +1,4 @@
-from .client_network import network
+from client.client_network import network
 import sys
 import select
 class interface(object):

@@ -1,6 +1,6 @@
 import datetime
-from .server_active_user import active_user
-from .server_active_chatroom import active_chatroom
+from server.server_active_user import active_user
+from server.server_active_chatroom import active_chatroom
 
 class message(object):
     """The basic message class for moving messages in the server"""

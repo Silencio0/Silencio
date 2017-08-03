@@ -22,40 +22,45 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="client_interface.py">
+    <Compile Include="client\__init__.py" />
+    <Compile Include="client\client_interface.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="client_network.py">
+    <Compile Include="client\client_network.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_active_chatroom.py">
+    <Compile Include="server\server_active_chatroom.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_active_user.py">
+    <Compile Include="server\server_active_user.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_database.py">
+    <Compile Include="server\server_database.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_message.py">
+    <Compile Include="server\server_message.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_network.py">
+    <Compile Include="server\server_network.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_stored_chatroom.py">
+    <Compile Include="server\server_stored_chatroom.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server_stored_user.py">
+    <Compile Include="server\server_stored_user.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="silencio_client.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="silencio_server.py" />
-    <Compile Include="__init__.py">
+    <Compile Include="server\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="client\" />
+    <Folder Include="server\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

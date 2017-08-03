@@ -1,4 +1,4 @@
-from .server_active_user import active_user
+from server.server_active_user import active_user
 
 class active_chatroom(object):
     """Class for containing all active users in an active chat room."""
