@@ -9,7 +9,7 @@ import pymysql
 class database(object):
 
     #this will change if we run off nolans computer. will update if/when necessary
-    db = ("localhost", "Avery", "test", "CHAT_DATABASE")
+    db = ("DESKTOP-UBQCG68", "Avery", "test", "CHAT_DATABASE", '3306')
 
     def __init__(self):
         self.con = pymysql.connect(*self.db)
