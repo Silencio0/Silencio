@@ -71,11 +71,11 @@ class network(object):
 
                 #accept connection and add active user with no current username
                 client_socket, address = initial_sock.accept()
-                connection_list.append(client_socket)
-                num_connections += 1
+                self.connection_list.append(client_socket)
+                self.num_connections += 1
                 new_user = active_user(client_socket, address)
-                active_user_list.append(new_user)
-                num_active_users +=1
+                self.active_user_list.append(new_user)
+                self.num_active_users +=1
             
             #else we read message from the socket and handle accordingly
             else:
@@ -109,7 +109,7 @@ class network(object):
                                 
                                 #find room that matches argument
                                 join_room = False
-                                for room in active_chatroom_list:
+                                for room in self.active_chatroom_list:
                                     if room.name is in_brackets:
                                         join_room = room
                             
@@ -141,7 +141,7 @@ class network(object):
                                 #Check if name taken
                                 desired_name = in_brackets
                                 name_taken = False
-                                for room in active_chatroom_list:
+                                for room in self.active_chatroom_list:
                                     if room.name == desired_name:
                                         name_taken = True
                                 
@@ -172,7 +172,7 @@ class network(object):
                                 #Alias allowed and set
                                 else:
                                     sent_by.alias = in_brackets
-                                    server_database.set_alias(in_brackets, username)
+                                    database.set_alias(in_brackets, username)
                                     sent_by.check_alias()
 
                             #if no args
@@ -195,7 +195,7 @@ class network(object):
 
                         #delete room command handling
                         elif state == "/delete":
-                            if active_user == active_chatroom.owner:
+                            if sent_by == in_brackets.owner:
                                 if destroy_chatroom(in_brackets) == True:
                                     send_server_feedback(active_user, "Destroyed chatroom: " + in_brackets)
                             else:
@@ -266,7 +266,7 @@ class network(object):
 
             #attempt to associate port with a user
             errored_user = False
-            for active_u in active_user_list:
+            for active_u in self.active_user_list:
                 if active_u.assigned_port is s:
                     errored_user = active_u
 
@@ -345,7 +345,7 @@ class network(object):
         
         #lookup chatroom
         room_found = False
-        for room in active_chatroom_list:
+        for room in self.active_chatroom_list:
             if room.name is in_room_name:
                 room_found = True
                 break
@@ -360,7 +360,7 @@ class network(object):
             sys.stderr.write('Broadcasting message to chat room named ' + in_room_name + '.\n')
             for user in room.users:
                 if user is not in_message.sender:
-                    send_msg(user, in_message)
+                    self.send_msg(user, in_message)
                 
         #record to chat log
 

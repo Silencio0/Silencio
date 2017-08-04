@@ -71,7 +71,6 @@ class interface(object):
                 my_net.disconnect()
                 return False
 
-
     def print_message(self, message):
     	if message:
     		print(message)
