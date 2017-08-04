@@ -17,11 +17,11 @@ class network(object):
 
         # Create empty connection variables
         self.num_connections = 0
-        self.connection_list
+        self.connection_list = []
         self.num_active_users = 0
-        self.active_user_list
+        self.active_user_list = []
         self.num_active_chatrooms = 0
-        self.active_chatroom_list
+        self.active_chatroom_list = []
         self.server_addr = ('localhost', 7700)
 
         # Ready initial connections port
@@ -41,11 +41,11 @@ class network(object):
 
         # Create empty connection variables
         self.num_connections = 0
-        self.connection_list
+        self.connection_list = []
         self.num_active_users = 0
-        self.active_user_list
+        self.active_user_list = []
         self.num_active_chatrooms = 0
-        self.active_chatroom_list
+        self.active_chatroom_list = []
 
         # Ready initial connections port
         self.initial_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
