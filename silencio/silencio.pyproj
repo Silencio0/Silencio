@@ -44,9 +44,6 @@
     <Compile Include="server\server_network.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="server\server_stored_chatroom.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="server\server_stored_user.py">
       <SubType>Code</SubType>
     </Compile>
