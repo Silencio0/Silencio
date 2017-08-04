@@ -10,7 +10,7 @@ class active_user(object):
         self.assigned_port = sock        
         self.client_addr = addr
         self.current_room = []
-        self.blocked_users
+        self.blocked_users = []
 
     def __init__(self, user, sock, addr):
         """ connection constructor given the connecting address and the assigned socket. """
@@ -19,7 +19,7 @@ class active_user(object):
         self.client_addr = addr
         self.current_room = []
         self.check_alias()
-        self.blocked_users
+        self.blocked_users = []
 
     def get_port(self):
         """Gives you the port assigned to the connection"""
