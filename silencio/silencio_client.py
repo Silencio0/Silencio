@@ -25,6 +25,10 @@ if __name__ == "__main__":
 
     while True:
 
-        interf.user_listen()    
+        worked = interf.user_listen() 
+
+        if not worked:
+            print('Connection failed. Exiting client.\n')
+            break 
 
     

@@ -23,7 +23,7 @@ class network(object):
         except:
             sys.stderr.write('failed to connect to server \n')
             failed = True
-            connection.close()
+            self.connection.close()
             return False
 
     def __init__(self, server_addr, server_port, local_port):
@@ -36,12 +36,12 @@ class network(object):
         self.message_q = []
         
         try:
-            connection.create_connect(server_port)
+            self.connection.create_connect(server_port)
 
         except:
             sys.stderr.write('failed to connect to server \n')
             failed = True
-            connection.close()
+            self.connection.close()
             return False
         
     def login(self, input_user, input_pass):
@@ -49,7 +49,8 @@ class network(object):
         try:
             self.send_message('/login [' + input_user + '] [' + input_pass + ']\r')
 
-        except: 
+        except:
+            sys.stderr.write('failed to login to server. \n') 
             return False
 
         return True
@@ -61,6 +62,7 @@ class network(object):
 
         except: 
             return False
+            sys.stderr.write('failed to register with server. \n')
 
         return True
 
@@ -74,8 +76,14 @@ class network(object):
 
         if self.connection in writeable:
             for message in self.message_q:
-                send_message(message)
-                sel.message_q.remove(message)
+
+                #attempt message send.
+                sent = self.send_message(message)
+
+                if not sent:
+                    return False
+                    
+                self.message_q.remove(message)
             
             return True
 
@@ -89,10 +97,10 @@ class network(object):
     def send_message(self,input_message):
         """ Function that sends messages to the server. Calls listen first to make sure port is free. Returns false if it Fails, true otherwise. """
         try: 
-            connection.send('\r' + input_message + '\r')
+            self.connection.send('\r' + input_message + '\r')
 
         except:
-            #message failed 
+            sys.stderr.write('failed to send message to server \n') 
             return False
 
         return True
@@ -105,7 +113,8 @@ class network(object):
 
     def disconnect(self):
         """ Function that disconnects client form the server. Returns True after successful disconnect."""
-        connection.close()
+        self.connection.close()
 
     def q_send(send, in_string):
+        """ Function for appending a message to the message queue """
         self.message_q.append(in_string)

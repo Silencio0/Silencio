@@ -43,16 +43,34 @@ class interface(object):
                     print("Incorrect username/password, please try again.\n")
                     
     def user_listen(self):
-    	#listens for user input and sends message if there's input
-    	while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
-    		user_input = sys.stdin.readline()
-    		if user_input:
-    			network.send_message(user_input)
-    	else:
-    		#listens for readable message and prints if available
-    		x = network.listen()
-    		if x != True and x != False and x != []:
-    			print_message(x)
+
+        second_chance = False
+        third_chance = False
+        
+
+    
+        #listens for user input and sends message if there's input
+        while sys.stdin in select.select([sys.stdin], [], [], 0)[0]:
+            user_input = sys.stdin.readline()
+            if user_input:
+                my_net.send_message(user_input)
+        else:
+            #listens for readable message and prints if available
+            x = mynet.listen()
+            if x != True and x != False and x != []:
+                second_chance = False
+                third_chance = False
+                print_message(x)
+
+            #if listen fails too much, then we return false on this.
+            if x is False:
+                second_chance = True
+            if x is False and second_chance:
+                third_chance = True
+            if x is false and third_chance:
+                my_net.disconnect()
+                return False
+
 
     def print_message(self, message):
     	if message:
