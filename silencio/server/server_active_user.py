@@ -68,7 +68,3 @@ class active_user(object):
         #if incorrect password
         else: 
             return False 
-
-    def register(self, in_user, in_pass):
-        """ Function that sets up new user info in the user database. Also logs in user. """
-        #add user to database and login

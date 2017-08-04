@@ -291,17 +291,10 @@ class network(object):
 
                     self.num_active_users -= 1
 
-                    
-
-
-
-
-
-
     def login(self, user_name, passkey):
         """ Login function returns 1 if Username/Password match otherwise 0 """
         try:
-            #poll database for user ifo
+            #poll database for user info
             userinfo = server_database.query_name(user_name)
             if userinfo[1] == passkey:
                 return True
