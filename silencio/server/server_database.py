@@ -1,5 +1,4 @@
 from server.server_stored_user import stored_user
-from server.server_stored_chatroom import stored_chatroom
 
 import pymysql
 #need pymysql because mysql does not have python 3 support
