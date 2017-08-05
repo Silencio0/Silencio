@@ -18,7 +18,7 @@ from server.server_database import database
 
 if __name__ == "__main__":
     base = database()
-    net = network('localhost')
+    net = network(7700)
 
     while True:
         net.listen()
