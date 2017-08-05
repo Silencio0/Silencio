@@ -13,7 +13,7 @@ class interface(object):
         while True:
             entered_address =  input('Enter server address:\n ')
             entered_port = input('Enter server port:\n ')
-            self.my_net = network(entered_address, entered_port)
+            self.my_net = network(entered_address, entered_port, None)
             if mynet is not False:
                 print("Successfully connected.\n")
                 return True

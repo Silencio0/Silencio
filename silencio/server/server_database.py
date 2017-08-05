@@ -10,7 +10,7 @@ class database(object):
     #this will change if we run off nolans computer. will update if/when necessary
   
     def __init__(self):
-        self.con = pymysql.connect(host = "96.54.58.48", port = 3306, user = "remoteUser",passwd =  "test", db = "CHAT_DATABASE")
+        self.con = pymysql.connect(host = "DESKTOP-UBQCG6M", port = 3306, user = "remoteUser",passwd =  "test", db = "CHAT_DATABASE")
         self.cursor = self.con.cursor()
      
 #inserts a user if the user isn't already there.

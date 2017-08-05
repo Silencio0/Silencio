@@ -11,25 +11,13 @@ class network(object):
     def __init__(self, server_addr, server_port):
         """ Default constructor for client network. Requires the server address and port number as inputs. Returns false if connection fails."""
 
-        self.local_addr = ('localhost', 7700)
-        self.server_socket = (server_addr, server_port)
-        self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection = socket.bind(self.local_addr)
-        self.message_q = []
-        
-        try:
-            self.connection.create_connect(server_port)
-
-        except:
-            sys.stderr.write('failed to connect to server \n')
-            failed = True
-            self.connection.close()
-            return False
-
     def __init__(self, server_addr, server_port, local_port):
         """ Constructor for client network. Requires the server address, server port, and local port as inputs. Returns false if connection fails."""
 
-        self.local_addr = ('localhost', local_port)
+        if local_port is None:
+            self.local_addr = ('localhost', 7700) 
+        else:
+            self.local_addr = ('localhost', local_port)
         self.server_socket = (server_addr, server_port)
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection = socket.bind(self.local_addr)
