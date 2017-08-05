@@ -19,9 +19,17 @@ if __name__ == "__main__":
     
     interf = interface()
 
-    interf.user_connect()
+    while True:
+        connected = interf.user_connect()
+
+        if connected:
+            break
     
-    interf.user_login()
+    while True:
+        logged = interf.user_login()
+
+        if logged:
+            break
 
     while True:
 
