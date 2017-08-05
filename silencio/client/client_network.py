@@ -22,13 +22,14 @@ class network(object):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.connection.bind(self.local_addr)
         self.message_q = []
+        self.failed = False
         
         try:
             self.connection.create_connect(server_port)
 
         except:
             sys.stderr.write('failed to connect to server \n')
-            failed = True
+            self.failed = True
             self.connection.close()
             return None
         
