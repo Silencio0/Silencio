@@ -71,7 +71,7 @@ class network(object):
             if s is initial_sock:
 
                 #accept connection and add active user with no current username
-                client_socket, address = initial_sock.accept()
+                client_socket, address = self.initial_sock.accept()
                 self.connection_list.append(client_socket)
                 self.num_connections += 1
                 new_user = active_user(client_socket, address)

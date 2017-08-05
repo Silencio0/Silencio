@@ -31,7 +31,7 @@ class active_user(object):
     
     def get_current_room(self):
         """returns the current chatroom for the active user"""
-        return current_room
+        return self.current_room
 
     def get_alias(self):
         
@@ -39,7 +39,7 @@ class active_user(object):
 
     def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
-        self.alias = database.retrieve_alias(username)
+        self.alias = database.retrieve_alias(self.username)
 
 
     def set_port(self, input_port):
