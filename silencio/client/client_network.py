@@ -30,7 +30,7 @@ class network(object):
             sys.stderr.write('failed to connect to server \n')
             failed = True
             self.connection.close()
-            return False
+            return None
         
     def login(self, input_user, input_pass):
         """ Function to send the login message to the server. Returns false if incorrect, True if correct. """
