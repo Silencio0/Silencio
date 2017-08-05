@@ -14,7 +14,7 @@ class interface(object):
             entered_address =  input('Enter server address:\n ')
             entered_port = input('Enter server port:\n ')
             self.my_net = network(entered_address, entered_port, None)
-            if self.my_net is not False:
+            if self.my_net is not None:
                 print("Successfully connected.\n")
                 return True
 
