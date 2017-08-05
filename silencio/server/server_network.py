@@ -64,10 +64,10 @@ class network(object):
         """function that listens to all connections for incoming traffic. Also listens to initial connection port. """ 
         readable, writeable, errored = select.select(self.connection_list, [],[])
         
-        #for all readable ports in the list with connections waiting
+        #for all readable ports in the list with connections waiting.
         for s in readable:
 
-            #if initial port has a connection waiting
+            #if initial port has a connection waiting, connect them.
             if s is initial_sock:
 
                 #accept connection and add active user with no current username
@@ -78,7 +78,7 @@ class network(object):
                 self.active_user_list.append(new_user)
                 self.num_active_users +=1
             
-            #else we read message from the socket and handle accordingly
+            #else we read message from the socket and handle accordingly.
             else:
                   
                 try:
