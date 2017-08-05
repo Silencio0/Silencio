@@ -14,12 +14,11 @@ class interface(object):
             entered_address =  input('Enter server address:\n ')
             entered_port = input('Enter server port:\n ')
             self.my_net = network(entered_address, entered_port, None)
-            if self.my_net is not None:
+            if self.my_net is None:
+                print("Unable to connect to specified address, please try again.\n")
+            else:
                 print("Successfully connected.\n")
                 return True
-
-            else:
-                print("Unable to connect to specified address, please try again.\n")
                 
     def user_login(self):
         """Prompts user for username and password"""
