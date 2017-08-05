@@ -54,7 +54,7 @@ class network(object):
         self.initial_sock.listen()
         
         #add initial connection port to connections for monitoring
-        self.connection_list.append(initial_sock)
+        self.connection_list.append(self.initial_sock)
 
         #init default chatroom
         admin = active_user('admin', 'NULL', 'localhost')
