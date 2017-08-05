@@ -35,11 +35,14 @@ class network(object):
         
     def login(self, input_user, input_pass):
         """ Function to send the login message to the server. Returns false if incorrect, True if correct. """
+
+        self.failed = False
         try:
             self.send_message('/login [' + input_user + '] [' + input_pass + ']\r')
 
         except:
             sys.stderr.write('failed to login to server. \n') 
+            Self.failed = True
             return False
 
         return True
