@@ -39,7 +39,7 @@ class active_user(object):
 
     def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
-        self.alias = database.retrieve_alias(self.username)
+        self.alias = database.retrieve_alias(self)
 
 
     def set_port(self, input_port):
