@@ -31,7 +31,7 @@ class active_user(object):
     
     def get_current_room(self):
         """returns the current chatroom for the active user"""
-        return current_room
+        return self.current_room
 
     def get_alias(self):
         
