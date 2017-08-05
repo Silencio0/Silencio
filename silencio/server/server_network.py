@@ -22,7 +22,7 @@ class network(object):
         self.active_user_list = []
         self.num_active_chatrooms = 0
         self.active_chatroom_list = []
-        self.server_addr = ('localhost', 7700)
+        self.server_addr = (socket.gethostbyname(), 7700)
 
         # Ready initial connections port
         self.initial_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,7 +36,7 @@ class network(object):
         admin = active_user('admin', 'NULL', 'localhost')
         self.default_room = self.create_chatroom(default, admin)
 
-    def __init__ (self, server_addr):
+    def __init__ (self, server_port):
         """ Network constructor with inputted server address formatted like ('localhost', 7700) """
 
         # Create empty connection variables
@@ -46,6 +46,7 @@ class network(object):
         self.active_user_list = []
         self.num_active_chatrooms = 0
         self.active_chatroom_list = []
+        server_addr = (socket.gethostname(),server_port)
 
         # Ready initial connections port
         self.initial_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
