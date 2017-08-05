@@ -5,7 +5,7 @@ class interface(object):
     """Container for the basic text interface and its functions. Basically, just reads the messages to the command line"""
  
     def __init__(self):
-        my_net = False
+        self.my_net = None
         
 
     def user_connect(self):
