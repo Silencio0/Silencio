@@ -20,7 +20,7 @@ class network(object):
             self.local_addr = ('localhost', local_port)
         self.server_socket = (server_addr, server_port)
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.connection = socket.bind(self.local_addr)
+        self.connection.bind(self.local_addr)
         self.message_q = []
         
         try:
