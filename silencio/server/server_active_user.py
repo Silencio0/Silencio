@@ -3,7 +3,7 @@ from server.server_database import database
 class active_user(object):
     """Class for handling active users logged into the server. Contains all info needed during active use."""
     
-
+    db = database()
     def __init__(self, sock, addr):
         """ Default active user constructor for users not signed in. Only holds the connection data, but not the user data. """
         self.username = NULL
@@ -39,7 +39,7 @@ class active_user(object):
 
     def check_alias(self):
         """Calls the database and confirms and sets the alias for a user"""
-        self.alias = database.retrieve_alias(self)
+        self.alias = self.db.retrieve_alias(self.username)
 
 
     def set_port(self, input_port):

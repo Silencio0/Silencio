@@ -69,8 +69,8 @@ class database(object):
             return None
         
 #Returns alias of a certain user.
-    def retrieve_alias(self, user):
-        self.cursor.execute("""SELECT alias from users WHERE name=(%s)""",(user.name))
+    def retrieve_alias(self, username):
+        self.cursor.execute("""SELECT alias from users WHERE name=(%s)""",(username))
         temp = self.cursor.fetchone()
         if temp is not None:
             return temp[0]
